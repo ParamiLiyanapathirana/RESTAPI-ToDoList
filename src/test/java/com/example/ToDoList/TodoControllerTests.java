@@ -1,23 +1,29 @@
 package com.example.ToDoList;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import controller.AuthController;
 import controller.TodoController;
 import model.Todo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TodoController.class)
 @SpringJUnitConfig
 @AutoConfigureMockMvc
 public class TodoControllerTests {
-
-    //create todo
 
     @Autowired
     private MockMvc mockMvc;
@@ -25,6 +31,7 @@ public class TodoControllerTests {
     @Autowired
     private ObjectMapper objectMapper;
 
+    // Create todo
     @WithMockUser(username = "testuser@example.com", roles = {"USER"})
     @Test
     public void testCreateTodo() throws Exception {
@@ -39,17 +46,22 @@ public class TodoControllerTests {
                 .andExpect(jsonPath("$.title").value("Sample Todo"));
     }
 
-    //reterive todo
+    // Retrieve todos
+
+
+
     @WithMockUser(username = "testuser@example.com", roles = {"USER"})
     @Test
     public void testGetTodos() throws Exception {
         mockMvc.perform(get("/api/todos?page=0&size=10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
-                .andExpect(jsonPath("$.content.length()").isLessThanOrEqualTo(10));
+                .andExpect(jsonPath("$.content.length()").value(lessThanOrEqualTo(10))); // Use the value() method here
     }
 
-    //update
+
+
+    // Update todo
     @WithMockUser(username = "testuser@example.com", roles = {"USER"})
     @Test
     public void testUpdateTodo() throws Exception {
@@ -64,14 +76,11 @@ public class TodoControllerTests {
                 .andExpect(jsonPath("$.title").value("Updated Todo Title"));
     }
 
-    //delete
+    // Delete todo
     @WithMockUser(username = "testuser@example.com", roles = {"USER"})
     @Test
     public void testDeleteTodo() throws Exception {
         mockMvc.perform(delete("/api/todos/{id}", 1))
                 .andExpect(status().isNoContent());
     }
-
-
-
 }

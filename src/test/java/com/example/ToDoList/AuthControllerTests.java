@@ -1,32 +1,26 @@
 package com.example.ToDoList;
 
 
-
-import controller.AuthController;
-import controller.AuthRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import controller.AuthReuest;
 import model.User;
-
-
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.annotation.MockMvcTest;
-import com.fasterxml.jackson.databind.ObjectMapper; // Ensure Jackson is included
-import org.junit.jupiter.api.Test;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import org.springframework.security.config.annotation.web.AuthorizeRequestsDsl;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@WebMvcTest(AuthController.class)
+@WebMvcTest(AuthReuest.class)
 @SpringJUnitConfig
 public class AuthControllerTests {
 
@@ -38,6 +32,7 @@ public class AuthControllerTests {
 
     @Test
     public void testRegisterUser() throws Exception {
+        // Create a new user for registration
         User user = new User();
         user.setEmail("testuser@example.com");
         user.setPassword("password123");
@@ -49,10 +44,10 @@ public class AuthControllerTests {
                 .andExpect(content().string("User registered successfully"));
     }
 
-
     @Test
-    public void testLoginUser() throws Exception {
-        AuthRequest authRequest = new AuthRequest();
+    public void testLoginUser_Success() throws Exception {
+        // Create a request for login with valid credentials
+        AuthReuest authRequest = new AuthReuest();
         authRequest.setEmail("testuser@example.com");
         authRequest.setPassword("password123");
 
@@ -60,9 +55,21 @@ public class AuthControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").exists());
+                .andExpect(content().string(org.hamcrest.Matchers.containsString(".")))  // JWT typically contains periods in its structure
+                .andExpect(jsonPath("$").isString());
     }
 
+    @Test
+    public void testLoginUser_InvalidCredentials() throws Exception {
+        // Create a request for login with invalid credentials
+        AuthReuest authRequest = new AuthReuest();
+        authRequest.setEmail("wronguser@example.com");
+        authRequest.setPassword("wrongpassword");
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(authRequest)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().string("Invalid credentials"));
+    }
 }
-
-
