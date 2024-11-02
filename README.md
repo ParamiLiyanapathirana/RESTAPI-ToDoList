@@ -14,3 +14,9 @@
 <h2>Authorization</h2>
 • Private Data: Ensure that users can only access and modify their own Todo items. <br>
 • Security: Implement appropriate security measures to protect user data. 
+
+
+<h2>Testing</h2>h2>
+
+• AuthControllerTests.java: Tests related to user authentication (register and login).<br>
+• TodoControllerTests.java: Tests for Todo CRUD operations (create, read, update, delete).
