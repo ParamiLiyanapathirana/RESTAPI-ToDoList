@@ -46,10 +46,7 @@ public class TodoControllerTests {
                 .andExpect(jsonPath("$.title").value("Sample Todo"));
     }
 
-    // Retrieve todos
-
-
-
+    // Retrieve todo
     @WithMockUser(username = "testuser@example.com", roles = {"USER"})
     @Test
     public void testGetTodos() throws Exception {

@@ -49,7 +49,7 @@ public class AuthControllerTests {
         // Create a request for login with valid credentials
         AuthReuest authRequest = new AuthReuest();
         authRequest.setEmail("testuser@example.com");
-        authRequest.setPassword("password123");
+        authRequest.setPassword("right");
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -64,7 +64,7 @@ public class AuthControllerTests {
         // Create a request for login with invalid credentials
         AuthReuest authRequest = new AuthReuest();
         authRequest.setEmail("wronguser@example.com");
-        authRequest.setPassword("wrongpassword");
+        authRequest.setPassword("wrong");
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)

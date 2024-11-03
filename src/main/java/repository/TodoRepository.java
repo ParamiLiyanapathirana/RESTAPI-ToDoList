@@ -20,6 +20,11 @@ import org.springframework.data.repository.query.Param;
 
 public interface TodoRepository extends JpaRepository<Todo, Long> {
     Page<Todo> findByUserId(Long userId, Pageable pageable);
+
+    @Query("SELECT t FROM Todo t WHERE t.user.id = :userId AND " +
+            "(LOWER(t.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(t.description) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+    Page<Todo> searchByUserIdAndKeyword(@Param("userId") Long userId, @Param("keyword") String keyword, Pageable pageable);
 }
 
 //enable search
@@ -27,4 +32,5 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
     @Query("SELECT t FROM Todo t WHERE t.user.id = :userId AND (t.title LIKE %:keyword% OR t.description LIKE %:keyword%)")
     Page<Todo> searchByUserIdAndKeyword(@Param("userId") Long userId, @Param("keyword") String keyword, Pageable pageable);
 }*/
+
 
