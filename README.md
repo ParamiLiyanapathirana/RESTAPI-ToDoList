@@ -25,8 +25,8 @@
 
 • Error Handling: Use @ControllerAdvice for consistent error responses.<br>
 • Pagination and Sorting: Managed by Spring Data JPA's Pageable.<br>
-• Search: Add keyword parameter in getTodos.<br>
+• Search: Add keyword parameter in getTodos. Search for keywords in the title or description fields and filter by the user ID.<br>
 • Logging: Use @Slf4j or Logger for error and request tracking.<br>
-• sorting : Enable sorting with Pageable, adding sort parameters to requests.<br>
+• sorting: Enable sorting with Pageable, adding sort parameters to requests.Constructs a Sort object based on sortBy and order.<br>
 • Completion Status: Track Todo status with a completed field and expose it via an endpoint.
 
